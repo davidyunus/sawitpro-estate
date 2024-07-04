@@ -1,0 +1,159 @@
+definitions:
+  domain.Estate:
+    properties:
+      length:
+        type: integer
+      uuid:
+        type: string
+      width:
+        type: integer
+    type: object
+  domain.GetDroneFlyingDistanceResponse:
+    properties:
+      distance:
+        type: integer
+    type: object
+  domain.GetTreeStatsResponse:
+    properties:
+      count:
+        type: integer
+      max:
+        type: integer
+      median:
+        type: integer
+      min:
+        type: integer
+    type: object
+  domain.PalmTree:
+    properties:
+      height:
+        maximum: 30
+        minimum: 1
+        type: integer
+      id:
+        type: integer
+      uuid:
+        type: string
+      x:
+        type: integer
+      "y":
+        type: integer
+    type: object
+  helper.HttpResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      errors: {}
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /estate:
+    post:
+      consumes:
+      - application/json
+      description: Create Estate
+      parameters:
+      - description: Estate Payload
+        in: body
+        name: estate
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Estate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Estate'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HttpResponse'
+      summary: Create Estate
+      tags:
+      - estates
+  /estate/{id}/drone-plan:
+    get:
+      consumes:
+      - application/json
+      description: Get the flying distance plan for a drone in an estate
+      parameters:
+      - description: Estate ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetDroneFlyingDistanceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HttpResponse'
+      summary: Get Drone Flying Distance
+      tags:
+      - estates
+  /estate/{id}/stats:
+    get:
+      consumes:
+      - application/json
+      description: Get statistics of trees in an estate
+      parameters:
+      - description: Estate ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetTreeStatsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HttpResponse'
+      summary: Get Tree Stats
+      tags:
+      - estates
+  /estate/{id}/tree:
+    post:
+      consumes:
+      - application/json
+      description: Plant a palm tree in an estate
+      parameters:
+      - description: Estate ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Palm Tree Payload
+        in: body
+        name: tree
+        required: true
+        schema:
+          $ref: '#/definitions/domain.PalmTree'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.HttpResponse'
+      summary: Plant Palm Tree
+      tags:
+      - estates
+swagger: "2.0"

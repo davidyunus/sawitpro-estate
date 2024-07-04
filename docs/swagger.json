@@ -1,0 +1,244 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/estate": {
+            "post": {
+                "description": "Create Estate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "estates"
+                ],
+                "summary": "Create Estate",
+                "parameters": [
+                    {
+                        "description": "Estate Payload",
+                        "name": "estate",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Estate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Estate"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/estate/{id}/drone-plan": {
+            "get": {
+                "description": "Get the flying distance plan for a drone in an estate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "estates"
+                ],
+                "summary": "Get Drone Flying Distance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Estate ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetDroneFlyingDistanceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/estate/{id}/stats": {
+            "get": {
+                "description": "Get statistics of trees in an estate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "estates"
+                ],
+                "summary": "Get Tree Stats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Estate ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetTreeStatsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/estate/{id}/tree": {
+            "post": {
+                "description": "Plant a palm tree in an estate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "estates"
+                ],
+                "summary": "Plant Palm Tree",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Estate ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Palm Tree Payload",
+                        "name": "tree",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.PalmTree"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helper.HttpResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.Estate": {
+            "type": "object",
+            "properties": {
+                "length": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.GetDroneFlyingDistanceResponse": {
+            "type": "object",
+            "properties": {
+                "distance": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.GetTreeStatsResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "max": {
+                    "type": "integer"
+                },
+                "median": {
+                    "type": "integer"
+                },
+                "min": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.PalmTree": {
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer",
+                    "maximum": 30,
+                    "minimum": 1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "integer"
+                },
+                "y": {
+                    "type": "integer"
+                }
+            }
+        },
+        "helper.HttpResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "errors": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
