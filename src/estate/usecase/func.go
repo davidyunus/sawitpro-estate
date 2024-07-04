@@ -20,35 +20,49 @@ func calculateMedian(arr []int) float64 {
 	}
 }
 
-func calculateTotalDistance(startX, startY int, palmTrees []domain.PalmTree, safetyLimit int) int {
-	var totalDistance int
-	currentHeight := 0
-	x, y := startX, startY
-
-	for _, tree := range palmTrees {
-		// Horizontal distance
-		totalDistance += (abs(tree.X-x) + abs(tree.Y-y)) * 10
-
-		// Vertical distance
-		newHeight := tree.Height + safetyLimit
-		totalDistance += (newHeight - currentHeight)
-		currentHeight = newHeight
-
-		// Move to the tree's position
-		x, y = tree.X, tree.Y
-	}
-
-	// Add distance for landing
-	totalDistance += currentHeight
-
-	return totalDistance
-}
-
 func abs(x int) int {
 	if x < 0 {
 		return -x
 	}
 	return x
+}
+
+func generateCoordinates(length, width int) []domain.PalmTree {
+	var coordinates []domain.PalmTree
+	for y := 1; y <= width; y++ {
+		if y%2 != 0 {
+			for x := 1; x <= length; x++ {
+				coordinates = append(coordinates, domain.PalmTree{X: x, Y: y, Height: 0})
+			}
+		} else {
+			for x := length; x >= 1; x-- {
+				coordinates = append(coordinates, domain.PalmTree{X: x, Y: y, Height: 0})
+			}
+		}
+	}
+	return coordinates
+}
+
+func mergePalmTrees(coordinates []domain.PalmTree, palmTrees []domain.PalmTree) []domain.PalmTree {
+	for i := range coordinates {
+		for _, palmTree := range palmTrees {
+			if coordinates[i].X == palmTree.X && coordinates[i].Y == palmTree.Y {
+				coordinates[i].Height = palmTree.Height
+				break
+			}
+		}
+	}
+	return coordinates
+}
+
+func removeTrailingZeroHeightCoordinates(coordinates []domain.PalmTree) []domain.PalmTree {
+	for i := len(coordinates) - 1; i >= 0; i-- {
+		if coordinates[i].Height != 0 {
+			break
+		}
+		coordinates = coordinates[:i]
+	}
+	return coordinates
 }
 
 var generateUUID = func() string {

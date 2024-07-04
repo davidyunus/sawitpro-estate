@@ -64,6 +64,12 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Maximum Distance (optional)",
+                        "name": "max-distance",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -185,6 +191,9 @@
             "properties": {
                 "distance": {
                     "type": "integer"
+                },
+                "rest": {
+                    "$ref": "#/definitions/domain.Rest"
                 }
             }
         },
@@ -219,6 +228,17 @@
                 "uuid": {
                     "type": "string"
                 },
+                "x": {
+                    "type": "integer"
+                },
+                "y": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Rest": {
+            "type": "object",
+            "properties": {
                 "x": {
                     "type": "integer"
                 },

@@ -2,9 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"sort"
 
 	"github.com/davidyunus/sawitpro-estate/src/domain"
 )
@@ -106,7 +103,7 @@ func (e *estateUsecase) GetTreeStats(ctx context.Context, id string) (*domain.Ge
 	return treeStatsResp, nil
 }
 
-func (e *estateUsecase) GetDroneFlyingDistance(ctx context.Context, id string) (*domain.GetDroneFlyingDistanceResponse, error) {
+func (e *estateUsecase) GetDroneFlyingDistance(ctx context.Context, id string, maxDistance int) (*domain.GetDroneFlyingDistanceResponse, error) {
 	estate, err := e.estateRepo.GetEstateByUuid(ctx, id)
 	if err != nil {
 		return nil, err
@@ -115,35 +112,47 @@ func (e *estateUsecase) GetDroneFlyingDistance(ctx context.Context, id string) (
 		return nil, domain.ErrEstateNotFound
 	}
 
-	trees, err := e.palmTreeLocationRepo.GetPalmTreesByUuid(ctx, id)
+	palmTrees, err := e.palmTreeLocationRepo.GetPalmTreesByUuid(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	sort.Slice(trees, func(i, j int) bool {
-		if trees[i].Y == trees[j].Y {
-			return trees[i].X < trees[j].X
+	palmTreeArr := generateCoordinates(estate.Length, estate.Width)
+	mergedCoordinates := mergePalmTrees(palmTreeArr, palmTrees)
+	finalCoordinates := removeTrailingZeroHeightCoordinates(mergedCoordinates)
+
+	horizontalDistance := 0
+	verticalDistance := 0
+	lastHeight := 0
+	for i, coordinate := range finalCoordinates {
+		if coordinate.Height != 0 {
+			if lastHeight == 0 {
+				verticalDistance++
+				lastHeight = coordinate.Height
+				verticalDistance += lastHeight
+			} else if coordinate.Height != 0 {
+				add := abs(lastHeight - coordinate.Height)
+				verticalDistance += add
+				lastHeight = coordinate.Height
+			}
+			if len(finalCoordinates)-1 == i {
+				verticalDistance++
+				verticalDistance += coordinate.Height
+			}
 		}
-		return trees[i].Y < trees[j].Y
-	})
-
-	trees = []domain.PalmTree{
-		{X: 3, Y: 1, Height: 10},
-		{X: 6, Y: 2, Height: 5},
-		{X: 4, Y: 2, Height: 7},
-		{X: 3, Y: 2, Height: 15},
-		{X: 5, Y: 3, Height: 30},
+		horizontalDistance += 10
+		if horizontalDistance+verticalDistance >= maxDistance && maxDistance != 0 {
+			return &domain.GetDroneFlyingDistanceResponse{
+				Distance: maxDistance,
+				Rest: &domain.Rest{
+					X: coordinate.X,
+					Y: coordinate.Y,
+				},
+			}, nil
+		}
 	}
-	log.Println(`trees`, trees)
-	startX, startY := 1, 1
-	// totalDistance := 0.0
-	// latestHeight := 0
-	safetyLimit := 1
 
-	totalDistance := calculateTotalDistance(startX, startY, trees, safetyLimit)
-
-	fmt.Printf("Total flying distance: %v meters\n", totalDistance)
-
+	totalDistance := horizontalDistance + verticalDistance
 	return &domain.GetDroneFlyingDistanceResponse{
 		Distance: int(totalDistance),
 	}, nil

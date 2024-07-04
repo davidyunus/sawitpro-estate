@@ -237,38 +237,58 @@ func TestGetDroneFlyingDistance(t *testing.T) {
 	handler := &estateHandler{
 		estateUsecase: estateMock,
 	}
+	type args struct {
+		id          string
+		maxDistance string
+	}
 
 	tests := []struct {
 		name       string
-		args       string
+		args       args
 		wantResult string
 		mock       func()
 	}{
 		{
 			name: "success",
-			args: common.UtUuid,
+			args: args{
+				id: common.UtUuid,
+			},
 			wantResult: `{"code":200,"message":"Success get drone flying distance","data":{"distance":100},"errors":null}
 `,
 			mock: func() {
-				estateMock.EXPECT().GetDroneFlyingDistance(gomock.Any(), common.UtUuid).Return(&domain.GetDroneFlyingDistanceResponse{
+				estateMock.EXPECT().GetDroneFlyingDistance(gomock.Any(), common.UtUuid, 0).Return(&domain.GetDroneFlyingDistanceResponse{
 					Distance: 100,
 				}, nil)
 			},
 		},
 		{
 			name: "error get drone flying distance",
-			args: common.UtUuid,
+			args: args{
+				id: common.UtUuid,
+			},
 			wantResult: `{"code":404,"message":"estate not found","data":null,"errors":"estate not found"}
 `,
 			mock: func() {
-				estateMock.EXPECT().GetDroneFlyingDistance(gomock.Any(), common.UtUuid).Return(nil, domain.ErrEstateNotFound)
+				estateMock.EXPECT().GetDroneFlyingDistance(gomock.Any(), common.UtUuid, 0).Return(nil, domain.ErrEstateNotFound)
+			},
+		},
+		{
+			name: "error max distance param",
+			args: args{
+				id:          common.UtUuid,
+				maxDistance: "aaa",
+			},
+			wantResult: `{"code":400,"message":"strconv.Atoi: parsing \"aaa\": invalid syntax","data":null,"errors":"strconv.Atoi: parsing \"aaa\": invalid syntax"}
+`,
+			mock: func() {
+				// estateMock.EXPECT().GetDroneFlyingDistance(gomock.Any(), common.UtUuid, 0).Return(nil, domain.ErrEstateNotFound)
 			},
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			e := echo.New()
-			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/estate/%s/drone-plan", test.args), nil)
+			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/estate/%s/drone-plan?max-distance=%v", test.args.id, test.args.maxDistance), nil)
 			req.Header.Set(common.UtContentType, common.ContentTypeJson)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)

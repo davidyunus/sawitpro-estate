@@ -76,6 +76,12 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Maximum Distance (optional)",
+                        "name": "max-distance",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -197,6 +203,9 @@ const docTemplate = `{
             "properties": {
                 "distance": {
                     "type": "integer"
+                },
+                "rest": {
+                    "$ref": "#/definitions/domain.Rest"
                 }
             }
         },
@@ -231,6 +240,17 @@ const docTemplate = `{
                 "uuid": {
                     "type": "string"
                 },
+                "x": {
+                    "type": "integer"
+                },
+                "y": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Rest": {
+            "type": "object",
+            "properties": {
                 "x": {
                     "type": "integer"
                 },

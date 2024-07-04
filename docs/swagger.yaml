@@ -12,6 +12,8 @@ definitions:
     properties:
       distance:
         type: integer
+      rest:
+        $ref: '#/definitions/domain.Rest'
     type: object
   domain.GetTreeStatsResponse:
     properties:
@@ -34,6 +36,13 @@ definitions:
         type: integer
       uuid:
         type: string
+      x:
+        type: integer
+      "y":
+        type: integer
+    type: object
+  domain.Rest:
+    properties:
       x:
         type: integer
       "y":
@@ -87,6 +96,10 @@ paths:
         in: path
         name: id
         required: true
+        type: string
+      - description: Maximum Distance (optional)
+        in: query
+        name: max-distance
         type: string
       produces:
       - application/json

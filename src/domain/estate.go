@@ -7,7 +7,7 @@ type (
 		CreateEstate(ctx context.Context, param *Estate) (*CreateEstateResponse, error)
 		PlantPalmTree(ctx context.Context, id string, param *PalmTree) (*PlantPalmTreeResponse, error)
 		GetTreeStats(ctx context.Context, id string) (*GetTreeStatsResponse, error)
-		GetDroneFlyingDistance(ctx context.Context, id string) (*GetDroneFlyingDistanceResponse, error)
+		GetDroneFlyingDistance(ctx context.Context, id string, maxDistance int) (*GetDroneFlyingDistanceResponse, error)
 	}
 
 	EstateRepository interface {
@@ -37,6 +37,12 @@ type (
 	}
 
 	GetDroneFlyingDistanceResponse struct {
-		Distance int `json:"distance"`
+		Distance int   `json:"distance"`
+		Rest     *Rest `json:"rest,omitempty"`
+	}
+
+	Rest struct {
+		X int `json:"x"`
+		Y int `json:"y"`
 	}
 )

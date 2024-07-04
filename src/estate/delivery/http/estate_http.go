@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/davidyunus/sawitpro-estate/src/domain"
 	"github.com/davidyunus/sawitpro-estate/src/helper"
@@ -129,21 +130,31 @@ func (e *estateHandler) GetTreeStats(c echo.Context) error {
 // @Tags estates
 // @Accept  json
 // @Produce  json
-// @Param   id    path  string  true "Estate ID"
+// @Param   id            path    string  true  "Estate ID"
+// @Param   max-distance  query   string  false "Maximum Distance (optional)"
 // @Success 200 {object} domain.GetDroneFlyingDistanceResponse
 // @Failure 400 {object} helper.HttpResponse
 // @Router /estate/{id}/drone-plan [get]
 func (e *estateHandler) GetDroneFlyingDistance(c echo.Context) error {
 	ctx := c.Request().Context()
 	id := c.Param("id")
+	maxDistance := c.Request().URL.Query().Get("max-distance")
+	if maxDistance == "" {
+		maxDistance = "0"
+	}
+	md, err := strconv.Atoi(maxDistance)
+	if err != nil {
+		response := helper.Response(http.StatusBadRequest, err.Error(), nil, err.Error())
+		return c.JSON(response.Code, response)
+	}
 
-	treeStats, err := e.estateUsecase.GetDroneFlyingDistance(ctx, id)
+	distance, err := e.estateUsecase.GetDroneFlyingDistance(ctx, id, md)
 	if err != nil {
 		code := helper.GetStatusCode(err)
 		response := helper.Response(code, err.Error(), nil, err.Error())
 		return c.JSON(response.Code, response)
 	}
 
-	response := helper.Response(http.StatusOK, "Success get drone flying distance", treeStats, nil)
+	response := helper.Response(http.StatusOK, "Success get drone flying distance", distance, nil)
 	return c.JSON(http.StatusCreated, response)
 }

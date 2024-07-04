@@ -56,18 +56,18 @@ func (mr *MockEstateUsecaseMockRecorder) CreateEstate(ctx, param any) *gomock.Ca
 }
 
 // GetDroneFlyingDistance mocks base method.
-func (m *MockEstateUsecase) GetDroneFlyingDistance(ctx context.Context, id string) (*domain.GetDroneFlyingDistanceResponse, error) {
+func (m *MockEstateUsecase) GetDroneFlyingDistance(ctx context.Context, id string, maxDistance int) (*domain.GetDroneFlyingDistanceResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDroneFlyingDistance", ctx, id)
+	ret := m.ctrl.Call(m, "GetDroneFlyingDistance", ctx, id, maxDistance)
 	ret0, _ := ret[0].(*domain.GetDroneFlyingDistanceResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetDroneFlyingDistance indicates an expected call of GetDroneFlyingDistance.
-func (mr *MockEstateUsecaseMockRecorder) GetDroneFlyingDistance(ctx, id any) *gomock.Call {
+func (mr *MockEstateUsecaseMockRecorder) GetDroneFlyingDistance(ctx, id, maxDistance any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDroneFlyingDistance", reflect.TypeOf((*MockEstateUsecase)(nil).GetDroneFlyingDistance), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDroneFlyingDistance", reflect.TypeOf((*MockEstateUsecase)(nil).GetDroneFlyingDistance), ctx, id, maxDistance)
 }
 
 // GetTreeStats mocks base method.
